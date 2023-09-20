@@ -10,12 +10,10 @@ import (
 
 type (
 	cookie string
-	user   string
 )
 
 const (
 	cookieName cookie = "authToken"
-	userID     user   = "userID"
 )
 
 type jwtCustomClaims struct {

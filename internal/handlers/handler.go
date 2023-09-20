@@ -103,14 +103,14 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 	case err == storage.ErrNoDBResult:
 		cryptedPsw, err := utils.HashString(user.Password)
 		if err != nil {
-			h.logger.Error(fmt.Sprintf("Register: failed to encrypt password"))
+			h.logger.Error("Register: failed to encrypt password")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		userID, err := h.store.Register(user.Login, cryptedPsw)
 		if err != nil {
-			h.logger.Error(fmt.Sprintf("Register: failed while registering in storage"))
+			h.logger.Error("Register: failed while registering in storage")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
