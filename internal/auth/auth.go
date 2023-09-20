@@ -10,22 +10,30 @@ import (
 
 type (
 	cookie string
+	user   string
 )
 
 const (
 	cookieName cookie = "authToken"
+	userID     user   = "userID"
 )
 
-type Claims struct {
-	jwt.RegisteredClaims
+type jwtCustomClaims struct {
 	UserID uint
+	jwt.RegisteredClaims
 }
 
 func GenerateCookie(c echo.Context, userID uint) error {
 	secret := "topSecret"
+
 	expirationTime := &jwt.NumericDate{Time: time.Now().Add(time.Hour)}
-	claims := Claims{}
-	claims.UserID = userID
+	claims := &jwtCustomClaims{
+		userID,
+		jwt.RegisteredClaims{
+			ExpiresAt: expirationTime,
+		},
+	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
@@ -37,4 +45,28 @@ func GenerateCookie(c echo.Context, userID uint) error {
 	cookie.Expires = expirationTime.Time
 	c.SetCookie(cookie)
 	return nil
+}
+
+func Authorization() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) (err error) {
+			secret := "topSecret"
+
+			cookie, err := c.Cookie(string(cookieName))
+			if err != nil {
+				return c.String(http.StatusUnauthorized, "")
+			}
+			token := cookie.Value
+
+			claims := jwtCustomClaims{}
+			parsedTokenInfo, err := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
+				return []byte(secret), nil
+			})
+			if err != nil || !parsedTokenInfo.Valid {
+				return c.String(http.StatusUnauthorized, "")
+			}
+
+			return nil
+		}
+	}
 }

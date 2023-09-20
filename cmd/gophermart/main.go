@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/log"
 
 	"github.com/gsk148/gophermart/internal/config"
@@ -32,15 +33,12 @@ func main() {
 	}
 
 	e := echo.New()
+	e.Use(middleware.Logger())
 	//add validator
 	e.Validator = customValidator.NewValidator(validator.New())
-	//add api group
-	api := e.Group("/api")
 
 	//add handler
-	handler := handlers.NewHandler(*db)
-	handlers.RegisterRoutes(api, *handler)
-
+	handlers.NewHandler(*e, *db)
 	if err := e.Start(":8080"); err != http.ErrServerClosed {
 		log.Fatal(err)
 	}

@@ -12,20 +12,21 @@ import (
 )
 
 type Handler struct {
-	Store storage.Storage
+	Router echo.Echo
+	Store  storage.Storage
 }
 
-func NewHandler(DB storage.Storage) *Handler {
-	return &Handler{
+func NewHandler(Router echo.Echo, DB storage.Storage) {
+	h := &Handler{
+		Router,
 		DB,
 	}
+	h.init()
 }
 
-func RegisterRoutes(parent *echo.Group, h Handler) {
-	g := parent.Group("/users")
-
-	g.POST("/login", h.login)
-	g.POST("/register", h.register)
+func (h *Handler) init() {
+	h.Router.POST("/api/users/login", h.login)
+	h.Router.POST("/api/users/register", h.register)
 }
 
 func (h *Handler) login(c echo.Context) error {
