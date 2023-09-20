@@ -23,17 +23,12 @@ type jwtCustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateCookie(c echo.Context, userID uint) error {
+func GenerateCookie(w http.ResponseWriter, userID uint) error {
 	secret := "topSecret"
 
 	expirationTime := &jwt.NumericDate{Time: time.Now().Add(time.Hour)}
-	claims := &jwtCustomClaims{
-		userID,
-		jwt.RegisteredClaims{
-			ExpiresAt: expirationTime,
-		},
-	}
-
+	claims := jwtCustomClaims{}
+	claims.UserID = userID
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
@@ -43,7 +38,7 @@ func GenerateCookie(c echo.Context, userID uint) error {
 	cookie.Name = string(cookieName)
 	cookie.Value = tokenString
 	cookie.Expires = expirationTime.Time
-	c.SetCookie(cookie)
+	http.SetCookie(w, cookie)
 	return nil
 }
 
