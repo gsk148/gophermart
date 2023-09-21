@@ -187,7 +187,7 @@ func (h *Handler) LoadOrders(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	h.logger.Info(fmt.Sprintf("LoadOrders: saved order with number", orderNum))
+	h.logger.Info("LoadOrders: saved order with number", orderNum)
 	w.WriteHeader(http.StatusAccepted)
 }
 
@@ -200,7 +200,7 @@ func (h *Handler) GetOrders(w http.ResponseWriter, r *http.Request) {
 		switch err {
 		case storage.ErrNoDBResult:
 			{
-				h.logger.Info(fmt.Sprintf("GetOrdersByUserID: no orders for user with id %s", userID))
+				h.logger.Info(fmt.Sprintf("GetOrdersByUserID: no orders for user with id %d", userID))
 				w.WriteHeader(http.StatusNoContent)
 				return
 			}

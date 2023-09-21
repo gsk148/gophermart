@@ -8,7 +8,6 @@ import (
 	"github.com/jackc/pgerrcode"
 	"github.com/labstack/gommon/log"
 	"github.com/lib/pq"
-	_ "github.com/lib/pq"
 	"github.com/pressly/goose/v3"
 
 	"github.com/gsk148/gophermart/internal/models"
