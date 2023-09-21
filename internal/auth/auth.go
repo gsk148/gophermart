@@ -1,19 +1,21 @@
 package auth
 
 import (
+	"context"
 	"net/http"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo"
 )
 
 type (
 	cookie string
+	user   string
 )
 
 const (
 	cookieName cookie = "authToken"
+	userID     user   = "userID"
 )
 
 type jwtCustomClaims struct {
@@ -40,26 +42,35 @@ func GenerateCookie(w http.ResponseWriter, userID uint) error {
 	return nil
 }
 
-func Authorization() echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) (err error) {
-			secret := "topSecret"
+func Authorization(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		secret := "topSecret"
 
-			cookie, err := c.Cookie(string(cookieName))
-			if err != nil {
-				return c.String(http.StatusUnauthorized, "")
-			}
-			token := cookie.Value
-
-			claims := jwtCustomClaims{}
-			parsedTokenInfo, err := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
-				return []byte(secret), nil
-			})
-			if err != nil || !parsedTokenInfo.Valid {
-				return c.String(http.StatusUnauthorized, "")
-			}
-
-			return nil
+		cookie, err := r.Cookie(string(cookieName))
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
 		}
+		token := cookie.Value
+
+		claims := jwtCustomClaims{}
+		parsedTokenInfo, err := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
+			return []byte(secret), nil
+		})
+		if err != nil || !parsedTokenInfo.Valid {
+			w.WriteHeader(http.StatusUnauthorized)
+		}
+
+		ctx := context.WithValue(r.Context(), userID, claims.UserID)
+		h.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func GetUserIDFromToken(w http.ResponseWriter, r *http.Request) int {
+	userID, ok := r.Context().Value(userID).(int)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		return 0
 	}
+	return userID
 }

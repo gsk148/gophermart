@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	ErrNoDBResult = errors.New("not found record in DB")
+	ErrNoDBResult     = errors.New("not found record in DB")
+	ErrDuplicateValue = errors.New("duplicate value while insert")
 )
 
 type Storage struct {

@@ -33,6 +33,7 @@ func main() {
 	router := chi.NewRouter()
 	// add logger
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+
 	//add handler
 	h := handlers.NewHandler(router, db, logger)
 
