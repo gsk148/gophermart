@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -17,14 +16,7 @@ import (
 func main() {
 	cfg := config.MustLoad()
 
-	db, err := storage.InitStorage(
-		fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-			cfg.Host,
-			cfg.Port,
-			cfg.Username,
-			cfg.Name,
-			cfg.Password,
-			cfg.Sslmode))
+	db, err := storage.InitStorage(cfg.DatabaseAddress)
 	if err != nil {
 		log.Error("failed to init storage")
 		os.Exit(1)
@@ -37,7 +29,7 @@ func main() {
 	//add handler
 	h := handlers.NewHandler(router, db, logger)
 
-	if err := http.ListenAndServe("localhost:8080", h.Router); err != nil {
+	if err := http.ListenAndServe(cfg.RunAddress, h.Router); err != nil {
 		logger.Error("failed to start server")
 	}
 }
