@@ -37,7 +37,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	err = auth.GenerateCookie(w, user.ID)
+	err = auth.GenerateCookie(w, userDB.ID)
 	if err != nil {
 		h.logger.Error("Failed to generate cookie, %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
