@@ -23,17 +23,6 @@ func NewUserPostgres(ctx context.Context, db *sql.DB, log slog.Logger) *UserPost
 	}
 }
 
-//func (s *Storage) Login(user models.User) error {
-//	userInDB, err := s.GetUserByLogin(user.Login)
-//	if err != nil {
-//		return err
-//	}
-//	if !utils.CheckHashAndPassword(userInDB.Password, user.Password) {
-//		return err
-//	}
-//	return nil
-//}
-
 func (u *UserPostgres) GetUserByLogin(login string) (*models.User, error) {
 	var user models.User
 	query := `SELECT id, login, password FROM USERS WHERE LOGIN=$1`

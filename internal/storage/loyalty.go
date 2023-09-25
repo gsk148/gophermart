@@ -27,7 +27,7 @@ func NewLoyaltyPostgres(ctx context.Context, db *sql.DB, log slog.Logger) *Loyal
 	}
 }
 
-func (p LoyaltyPostgres) DeductPoints(w models.WithdrawBalanceRequest, userID int, orderNumber string) error {
+func (p LoyaltyPostgres) DeductPoints(w models.WithdrawBalanceRequest, userID uint, orderNumber string) error {
 	queryUpdateCurrentBalance := `UPDATE users SET balance=balance-$1 WHERE id=$2`
 	queryUpdateWithdrawal := `UPDATE orders SET amount=$1 WHERE user_id=$2 AND number=$3 AND operation_type=$4`
 
@@ -55,7 +55,7 @@ func (p LoyaltyPostgres) DeductPoints(w models.WithdrawBalanceRequest, userID in
 	return tx.Commit()
 }
 
-func (p LoyaltyPostgres) GetWithdrawals(userID int) ([]*models.GetWithdrawalsResponse, error) {
+func (p LoyaltyPostgres) GetWithdrawals(userID uint) ([]*models.GetWithdrawalsResponse, error) {
 	var (
 		withdrawal models.GetWithdrawalsResponse
 		response   []*models.GetWithdrawalsResponse
@@ -86,7 +86,7 @@ func (p LoyaltyPostgres) GetWithdrawals(userID int) ([]*models.GetWithdrawalsRes
 	return response, nil
 }
 
-func (p LoyaltyPostgres) GetBalance(userID int) (*models.GetBalanceResponse, error) {
+func (p LoyaltyPostgres) GetBalance(userID uint) (*models.GetBalanceResponse, error) {
 	var balance models.GetBalanceResponse
 	current := `SELECT balance FROM users WHERE id=$1`
 	withdrawn := `SELECT sum(amount) FROM orders where user_id=$1 and operation_type=$2`

@@ -26,17 +26,17 @@ type User interface {
 
 type Order interface {
 	GetOrderByNumber(orderNumber string) (*models.GetOrdersResponse, error)
-	LoadOrder(orderNumber string, userID int) error
-	GetOrdersByUserID(userID int) ([]*models.GetOrdersResponse, error)
+	LoadOrder(orderNumber string, userID uint) error
+	GetOrdersByUserID(userID uint) ([]*models.GetOrdersResponse, error)
 	GetOrdersForProcessing(poolSize int) ([]string, error)
 	UpdateOrderStateProcessed(order *models.GetOrderAccrual) error
 	UpdateOrderStateInvalid(order *models.GetOrderAccrual) error
 }
 
 type Loyalty interface {
-	DeductPoints(w models.WithdrawBalanceRequest, userID int, orderNumber string) error
-	GetWithdrawals(userID int) ([]*models.GetWithdrawalsResponse, error)
-	GetBalance(userID int) (*models.GetBalanceResponse, error)
+	DeductPoints(w models.WithdrawBalanceRequest, userID uint, orderNumber string) error
+	GetWithdrawals(userID uint) ([]*models.GetWithdrawalsResponse, error)
+	GetBalance(userID uint) (*models.GetBalanceResponse, error)
 }
 
 type Repository struct {

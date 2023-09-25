@@ -53,7 +53,7 @@ func (p OrderPostgres) GetOrderByNumber(orderNumber string) (*models.GetOrdersRe
 	return &order, nil
 }
 
-func (p OrderPostgres) LoadOrder(orderNumber string, userID int) error {
+func (p OrderPostgres) LoadOrder(orderNumber string, userID uint) error {
 	queryAccrual := `INSERT INTO orders(number, user_id, uploaded_time) VALUES($1, $2, $3)`
 	queryWithdrawal := `INSERT INTO orders(number, user_id, uploaded_time, operation_type) VALUES($1, $2, $3, $4)`
 
@@ -98,7 +98,7 @@ func (p OrderPostgres) LoadOrder(orderNumber string, userID int) error {
 	return tx.Commit()
 }
 
-func (p OrderPostgres) GetOrdersByUserID(userID int) ([]*models.GetOrdersResponse, error) {
+func (p OrderPostgres) GetOrdersByUserID(userID uint) ([]*models.GetOrdersResponse, error) {
 	var (
 		order  models.GetOrdersResponse
 		orders []*models.GetOrdersResponse

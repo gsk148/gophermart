@@ -10,7 +10,7 @@ type GetOrderAccrual struct {
 
 type GetOrdersResponse struct {
 	ID         int       `json:"-"`
-	UserID     int       `json:"-"`
+	UserID     uint      `json:"-"`
 	Number     string    `json:"number"`
 	Status     string    `json:"status"`
 	Accrual    float64   `json:"accrual,omitempty"`
