@@ -1,0 +1,7 @@
+database:
+  username: "gophermart"
+  password: "gopher_secret"
+  host: "127.0.0.1"
+  port: "5432"
+  name: "gophermart"
+  sslmode: "disable"
